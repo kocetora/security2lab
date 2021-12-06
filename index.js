@@ -23,7 +23,9 @@ const xor = (char, line, position, discover) =>
 //     hexToBytes(salsa20[0])[2]))
 
 const discover = (char, line, position) => bytes.map((el, i) => {
-  el[position] = i === line ? char : xor(char, line, position, i);
+  if(el[position]) {
+    el[position] = i === line ? char : xor(char, line, position, i);
+  }
   return el;
 })
 
@@ -70,6 +72,13 @@ fs.writeFileSync('result.csv', discover('e', 8, 25).join('\r\n'))
 fs.writeFileSync('result.csv', discover(' ', 9, 26).join('\r\n'))
 fs.writeFileSync('result.csv', discover('.', 18, 27).join('\r\n'))
 fs.writeFileSync('result.csv', discover('n', 17, 28).join('\r\n'))
+fs.writeFileSync('result.csv', discover(' ', 6, 29).join('\r\n'))
+fs.writeFileSync('result.csv', discover('t', 5, 30).join('\r\n'))
+fs.writeFileSync('result.csv', discover('d', 0, 31).join('\r\n'))
+fs.writeFileSync('result.csv', discover(' ', 0, 32).join('\r\n'))
+fs.writeFileSync('result.csv', discover('h', 9, 33).join('\r\n'))
+fs.writeFileSync('result.csv', discover('i', 9, 34).join('\r\n'))
+// fs.writeFileSync('result.csv', discover('t', 14, 35).join('\r\n'))
 
 
 
