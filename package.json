@@ -1,0 +1,26 @@
+{
+  "name": "security2lab",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "format": "prettier --write ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kocetora/security2lab.git"
+  },
+  "keywords": [
+    "cribGrag"
+  ],
+  "author": "victoria.rieznikova",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kocetora/security2lab/issues"
+  },
+  "homepage": "https://github.com/kocetora/security2lab#readme",
+  "devDependencies": {
+    "prettier": "^2.5.1"
+  }
+}
