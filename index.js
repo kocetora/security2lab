@@ -23,3 +23,13 @@ const discover = (char, line, position) => bytes.map((el, i) => {
 })
 
 fs.writeFileSync('result.csv', discover('T', 2, 0).join('\r\n'))
+fs.writeFileSync('result.csv', discover('h', 2, 1).join('\r\n'))
+fs.writeFileSync('result.csv', discover('e', 2, 2).join('\r\n'))
+fs.writeFileSync('result.csv', discover(' ', 2, 3).join('\r\n'))
+fs.writeFileSync('result.csv', discover(' ', 5, 4).join('\r\n'))
+// fs.writeFileSync('result.csv', discover('e', 7, 5).join('\r\n'))
+// fs.writeFileSync('result.csv', discover('o', 8, 5).join('\r\n'))
+// fs.writeFileSync('result.csv', discover('o', 8, 5).join('\r\n'))
+
+
+
