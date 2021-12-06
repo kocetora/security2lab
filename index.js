@@ -1,80 +1,98 @@
 const fs = require('fs')
 
-const salsa20 = fs.readFileSync('salsa20.txt', 'utf8' , (err, data) => data).split('\r\n')
-
-const hexToBytes = hex => 
-  Array.from(hex)
-       .reduce((acc, curr, i, arr) => 
-          i % 2 ? 
-            acc : 
-            [...acc, parseInt(curr + arr[i + 1], 16)], 
-          [])
-
-const bytes = salsa20.map(el => hexToBytes(el))
-fs.writeFileSync('bytes.csv', bytes.join('\r\n'))
-
-const xor = (char, line, position, discover) => 
-  String.fromCharCode(
-    char.charCodeAt(0)^
-      hexToBytes(salsa20[line])[position]^
-      hexToBytes(salsa20[discover])[position])
-
-const discover = (char, line, position) => bytes.map((el, i) => {
-  if(el[position]) {
-    el[position] = i === line ? char : xor(char, line, position, i);
+class CribDrag {
+  constructor(salsa20file) {
+    this.salsa20 = fs.readFileSync(salsa20file, 'utf8' , (err, data) => data).split('\r\n');
+    this.bytes = this.salsa20.map(el => this.hexToBytes(el));
+    fs.writeFileSync('bytes.csv', this.bytes.join('\r\n'));
   }
-  return el.join(';');
-})
+  
+  hexToBytes(hex) {
+    return Array.from(hex)
+      .reduce((acc, curr, i, arr) => 
+        i % 2 ? 
+          acc : 
+          [...acc, parseInt(curr + arr[i + 1], 16)], 
+        [])
+  } 
+  
+  xor(char, line, pos, discover) {
+    return String.fromCharCode(
+      char.charCodeAt(0)^
+        this.hexToBytes(this.salsa20[line])[pos]^
+        this.hexToBytes(this.salsa20[discover])[pos])
+  }
+  
+  discover(char, line, pos) {
+    return this.bytes.map((el, i) => {
+      if(el[pos]) {
+        el[pos] = i === line ? char : this.xor(char, line, pos, i);
+      }
+      return el.join(';');
+    })
+  }
+  
+  guess(char, line, pos) {
+    fs.writeFileSync('result.csv', this.discover(char, line, pos).join('\r\n'))
+    return this;
+  }
 
-fs.writeFileSync('result.csv', discover('T', 2, 0).join('\r\n'))
-fs.writeFileSync('result.csv', discover('h', 2, 1).join('\r\n'))
-fs.writeFileSync('result.csv', discover('e', 2, 2).join('\r\n'))
-fs.writeFileSync('result.csv', discover(' ', 2, 3).join('\r\n'))
-fs.writeFileSync('result.csv', discover(' ', 5, 4).join('\r\n'))
-fs.writeFileSync('result.csv', discover('u', 7, 5).join('\r\n'))
-fs.writeFileSync('result.csv', discover('o', 0, 6).join('\r\n'))
-fs.writeFileSync('result.csv', discover(' ', 0, 7).join('\r\n'))
-fs.writeFileSync('result.csv', discover('s', 11, 8).join('\r\n'))
-fs.writeFileSync('result.csv', discover(' ', 11, 9).join('\r\n'))
-fs.writeFileSync('result.csv', discover('h', 18, 10).join('\r\n'))
-fs.writeFileSync('result.csv', discover('e', 18, 11).join('\r\n'))
-fs.writeFileSync('result.csv', discover(' ', 18, 12).join('\r\n'))
-fs.writeFileSync('result.csv', discover(' ', 0, 13).join('\r\n'))
-fs.writeFileSync('result.csv', discover('f', 5, 14).join('\r\n'))
-fs.writeFileSync('result.csv', discover(' ', 5, 15).join('\r\n'))
-fs.writeFileSync('result.csv', discover('e', 18, 16).join('\r\n'))
-fs.writeFileSync('result.csv', discover(' ', 18, 17).join('\r\n'))
-fs.writeFileSync('result.csv', discover(' ', 0, 18).join('\r\n'))
-fs.writeFileSync('result.csv', discover(' ', 14, 19).join('\r\n'))
-fs.writeFileSync('result.csv', discover('h', 0, 20).join('\r\n'))
-fs.writeFileSync('result.csv', discover('e', 0, 21).join('\r\n'))
-fs.writeFileSync('result.csv', discover(' ', 0, 22).join('\r\n'))
-fs.writeFileSync('result.csv', discover(' ', 12, 23).join('\r\n'))
-fs.writeFileSync('result.csv', discover(' ', 11, 24).join('\r\n'))
-fs.writeFileSync('result.csv', discover('e', 8, 25).join('\r\n'))
-fs.writeFileSync('result.csv', discover(' ', 9, 26).join('\r\n'))
-fs.writeFileSync('result.csv', discover('.', 18, 27).join('\r\n'))
-fs.writeFileSync('result.csv', discover('n', 17, 28).join('\r\n'))
-fs.writeFileSync('result.csv', discover(' ', 6, 29).join('\r\n'))
-fs.writeFileSync('result.csv', discover('t', 5, 30).join('\r\n'))
-fs.writeFileSync('result.csv', discover('d', 0, 31).join('\r\n'))
-fs.writeFileSync('result.csv', discover(' ', 0, 32).join('\r\n'))
-fs.writeFileSync('result.csv', discover('h', 9, 33).join('\r\n'))
-fs.writeFileSync('result.csv', discover('t', 8, 34).join('\r\n'))
-fs.writeFileSync('result.csv', discover('e', 8, 35).join('\r\n'))
-fs.writeFileSync('result.csv', discover('r', 8, 36).join('\r\n'))
-fs.writeFileSync('result.csv', discover(' ', 8, 37).join('\r\n'))
-fs.writeFileSync('result.csv', discover(' ', 15, 38).join('\r\n'))
-fs.writeFileSync('result.csv', discover('t', 16, 39).join('\r\n'))
-fs.writeFileSync('result.csv', discover('a', 11, 40).join('\r\n'))
-fs.writeFileSync('result.csv', discover('v', 11, 41).join('\r\n'))
-fs.writeFileSync('result.csv', discover('e', 11, 42).join('\r\n'))
-fs.writeFileSync('result.csv', discover(',', 8, 43).join('\r\n'))
-fs.writeFileSync('result.csv', discover('h', 15, 44).join('\r\n'))
-fs.writeFileSync('result.csv', discover('m', 0, 45).join('\r\n'))
-fs.writeFileSync('result.csv', discover('e', 0, 46).join('\r\n'))
-fs.writeFileSync('result.csv', discover(',', 0, 47).join('\r\n'))
-const text = fs.readFileSync('result.csv', 'utf8' , (err, data) => data).split('\r\n').map(el => el.split(';').join('')).join('\r\n')
-fs.writeFileSync('text.txt', text)
+  result() {
+    fs.writeFileSync('text.txt', 
+      fs.readFileSync('result.csv', 'utf8' , (err, data) => data)
+        .split('\r\n')
+        .map(el => el.split(';').join(''))
+        .join('\r\n'))
+  }
+};
 
-
+new CribDrag("salsa20.txt")
+  .guess('T', 2, 0)
+  .guess('h', 2, 1)
+  .guess('e', 2, 2)
+  .guess(' ', 2, 3)
+  .guess(' ', 5, 4)
+  .guess('u', 7, 5)
+  .guess('o', 0, 6)
+  .guess(' ', 0, 7)
+  .guess('s', 11, 8)
+  .guess(' ', 11, 9)
+  .guess('h', 18, 10)
+  .guess('e', 18, 11)
+  .guess(' ', 18, 12)
+  .guess(' ', 0, 13)
+  .guess('f', 5, 14)
+  .guess(' ', 5, 15)
+  .guess('e', 18, 16)
+  .guess(' ', 18, 17)
+  .guess(' ', 0, 18)
+  .guess(' ', 14, 19)
+  .guess('h', 0, 20)
+  .guess('e', 0, 21)
+  .guess(' ', 0, 22)
+  .guess(' ', 12, 23)
+  .guess(' ', 11, 24)
+  .guess('e', 8, 25)
+  .guess(' ', 9, 26)
+  .guess('.', 18, 27)
+  .guess('n', 17, 28)
+  .guess(' ', 6, 29)
+  .guess('t', 5, 30)
+  .guess('d', 0, 31)
+  .guess(' ', 0, 32)
+  .guess('h', 9, 33)
+  .guess('t', 8, 34)
+  .guess('e', 8, 35)
+  .guess('r', 8, 36)
+  .guess(' ', 8, 37)
+  .guess(' ', 15, 38)
+  .guess('t', 16, 39)
+  .guess('a', 11, 40)
+  .guess('v', 11, 41)
+  .guess('e', 11, 42)
+  .guess(',', 8, 43)
+  .guess('h', 15, 44)
+  .guess('m', 0, 45)
+  .guess('e', 0, 46)
+  .guess(',', 0, 47)
+  .result()
